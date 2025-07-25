@@ -22,12 +22,16 @@ const generateAdditionProblem = () => {
 
 const checkAnswer = (problem: string, answer: string) => {
   const [num1, , num2] = problem.split(" ");
-  return parseInt(num1) + parseInt(num2) === parseInt(answer);
+  return parseInt(num1) + parseInt(num2) || parseInt(num1) - parseInt(num2) === parseInt(answer);
 };
+
+const generateRandomProblem = () => {
+  return Math.random() < 0.5 ? generateAdditionProblem() : generateSubtractionProblem();
+}
 
 export default function Index() {
   const [currentProblem, setCurrentProblem] = useState(
-    generateAdditionProblem()
+    generateRandomProblem(),
   );
   const [userAnswer, setUserAnswer] = useState("");
   const [isCorrect, setIsCorrect] = useState(false);
@@ -41,6 +45,9 @@ export default function Index() {
     <View
       style={{
         flex: 4,
+        marginTop: 50,
+        padding: 20,
+        flexDirection: "column",
         justifyContent: "top",
         alignItems: "center",
       }}
@@ -101,7 +108,7 @@ export default function Index() {
               },
               (buttonIndex) => {
                 if (buttonIndex === 1) {
-                  setCurrentProblem(generateAdditionProblem());
+                  setCurrentProblem(generateRandomProblem());
                   setUserAnswer("");
                   setIsCorrect(false);
                 }
@@ -122,11 +129,6 @@ export default function Index() {
       />
       {isCorrect && (
         <Text style={{ color: "green", marginTop: 20 }}>Correct!</Text>
-      )}
-      {!isCorrect && userAnswer && (
-        <Text style={{ color: "red", marginTop: 20 }}>
-          Incorrect, try again.
-        </Text>
       )}
     </View>
     </SafeAreaProvider>
