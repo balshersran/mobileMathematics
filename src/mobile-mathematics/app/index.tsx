@@ -20,9 +20,14 @@ const generateAdditionProblem = () => {
   return `${num1} + ${num2}`;
 };
 
-const checkAnswer = (problem: string, answer: string) => {
+const checkAdditionAnswer = (problem: string, answer: string) => {
   const [num1, , num2] = problem.split(" ");
-  return parseInt(num1) + parseInt(num2) || parseInt(num1) - parseInt(num2) === parseInt(answer);
+  return parseInt(num1) + parseInt(num2) === parseInt(answer);
+}
+
+const checkSubtractionAnswer = (problem: string, answer: string) => {
+  const [num1, , num2] = problem.split(" ");
+  return parseInt(num1) - parseInt(num2) === parseInt(answer);
 };
 
 const generateRandomProblem = () => {
@@ -37,8 +42,18 @@ export default function Index() {
   const [isCorrect, setIsCorrect] = useState(false);
   const [problems, setProblems] = useState<string[]>([]);
   useEffect(() => {
-    setCurrentProblem(generateAdditionProblem());
+    setCurrentProblem(generateRandomProblem());
   }, []);
+
+
+  function checkAnswer(currentProblem: string, userAnswer: string) {
+    if (currentProblem.includes("+")) {
+      return checkAdditionAnswer(currentProblem, userAnswer);
+    } else if (currentProblem.includes("-")) {
+      return checkSubtractionAnswer(currentProblem, userAnswer);
+    }
+    return false;
+  }
 
   return (
     <SafeAreaProvider>
@@ -60,27 +75,7 @@ export default function Index() {
           headerTitleStyle: { fontWeight: "bold" },
         }}
       />
-      <Text style={{ fontSize: 100, marginVertical: 10 }}>{currentProblem}</Text>
-      <View style={{ marginBottom: 20, width: "60%" }}>
-        <Button
-          title="Generate Subtraction Problem"
-          onPress={() => {
-            setCurrentProblem(generateSubtractionProblem());
-            setUserAnswer("");
-            setIsCorrect(false);
-          }}
-        />
-      </View>
-      <View style={{ marginBottom: 20, width: "60%" }}>
-        <Button
-          title="Generate Addition Problem"
-          onPress={() => {
-            setCurrentProblem(generateAdditionProblem());
-            setUserAnswer("");
-            setIsCorrect(false);
-          }}
-        />
-      </View>
+      <Text style={{ fontSize: 100, marginVertical: 10, paddingTop: 20, paddingBottom: 20 }}>{currentProblem}</Text>
       <TextInput
         style={{
           height: 40,
@@ -128,7 +123,9 @@ export default function Index() {
         }}
       />
       {isCorrect && (
-        <Text style={{ color: "green", marginTop: 20 }}>Correct!</Text>
+        <View>
+          <Text style={{ color: "green", marginTop: 20 }}>Correct!</Text>
+        </View>
       )}
     </View>
     </SafeAreaProvider>
