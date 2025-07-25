@@ -2,6 +2,17 @@ import React from "react";
 import { Text, View, TextInput, Button, ActionSheetIOS } from "react-native";
 import { useState, useEffect } from "react";
 import { Stack } from "expo-router";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+
+const generateSubtractionProblem = () => {
+  const num1 = Math.floor(Math.random() * 10); // Generate a random number between 0 and 9
+  const num2 = Math.floor(Math.random() * 10); // Generate another random number between 0 and 9, ensure it is less than num1 for subtraction
+  if (num1 < num2) {
+    return `${num2} - ${num1}`; // Ensure the first number is larger
+} else {
+    return `${num1} - ${num2}`; // Normal case
+  }
+};
 
 const generateAdditionProblem = () => {
   const num1 = Math.floor(Math.random() * 10);
@@ -26,10 +37,11 @@ export default function Index() {
   }, []);
 
   return (
+    <SafeAreaProvider>
     <View
       style={{
-        flex: 1,
-        justifyContent: "center",
+        flex: 4,
+        justifyContent: "top",
         alignItems: "center",
       }}
     >
@@ -41,7 +53,27 @@ export default function Index() {
           headerTitleStyle: { fontWeight: "bold" },
         }}
       />
-      <Text style={{ fontSize: 18, marginVertical: 20 }}>{currentProblem}</Text>
+      <Text style={{ fontSize: 100, marginVertical: 10 }}>{currentProblem}</Text>
+      <View style={{ marginBottom: 20, width: "60%" }}>
+        <Button
+          title="Generate Subtraction Problem"
+          onPress={() => {
+            setCurrentProblem(generateSubtractionProblem());
+            setUserAnswer("");
+            setIsCorrect(false);
+          }}
+        />
+      </View>
+      <View style={{ marginBottom: 20, width: "60%" }}>
+        <Button
+          title="Generate Addition Problem"
+          onPress={() => {
+            setCurrentProblem(generateAdditionProblem());
+            setUserAnswer("");
+            setIsCorrect(false);
+          }}
+        />
+      </View>
       <TextInput
         style={{
           height: 40,
@@ -97,5 +129,7 @@ export default function Index() {
         </Text>
       )}
     </View>
+    </SafeAreaProvider>
   );
 }
+
