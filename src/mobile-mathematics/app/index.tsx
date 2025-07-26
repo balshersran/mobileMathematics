@@ -9,7 +9,7 @@ const generateSubtractionProblem = () => {
   const num2 = Math.floor(Math.random() * 10); // Generate another random number between 0 and 9, ensure it is less than num1 for subtraction
   if (num1 < num2) {
     return `${num2} - ${num1}`; // Ensure the first number is larger
-} else {
+  } else {
     return `${num1} - ${num2}`; // Normal case
   }
 };
@@ -23,7 +23,7 @@ const generateAdditionProblem = () => {
 const checkAdditionAnswer = (problem: string, answer: string) => {
   const [num1, , num2] = problem.split(" ");
   return parseInt(num1) + parseInt(num2) === parseInt(answer);
-}
+};
 
 const checkSubtractionAnswer = (problem: string, answer: string) => {
   const [num1, , num2] = problem.split(" ");
@@ -31,13 +31,13 @@ const checkSubtractionAnswer = (problem: string, answer: string) => {
 };
 
 const generateRandomProblem = () => {
-  return Math.random() < 0.5 ? generateAdditionProblem() : generateSubtractionProblem();
-}
+  return Math.random() < 0.5
+    ? generateAdditionProblem()
+    : generateSubtractionProblem();
+};
 
 export default function Index() {
-  const [currentProblem, setCurrentProblem] = useState(
-    generateRandomProblem(),
-  );
+  const [currentProblem, setCurrentProblem] = useState(generateRandomProblem());
   const [userAnswer, setUserAnswer] = useState("");
   const [isCorrect, setIsCorrect] = useState(false);
   const [problems, setProblems] = useState<string[]>([]);
@@ -45,6 +45,12 @@ export default function Index() {
     setCurrentProblem(generateRandomProblem());
   }, []);
 
+  const [score, setScore] = useState(0);
+  useEffect(() => {
+    if (isCorrect) {
+      setScore(score + 1);
+    }
+  }, [isCorrect]);
 
   function checkAnswer(currentProblem: string, userAnswer: string) {
     if (currentProblem.includes("+")) {
@@ -57,78 +63,86 @@ export default function Index() {
 
   return (
     <SafeAreaProvider>
-    <View
-      style={{
-        flex: 4,
-        marginTop: 50,
-        padding: 20,
-        flexDirection: "column",
-        justifyContent: "top",
-        alignItems: "center",
-      }}
-    >
-      <Stack.Screen
-        options={{
-          title: "Math Problems",
-          headerStyle: { backgroundColor: "#f4511e" },
-          headerTintColor: "#fff",
-          headerTitleStyle: { fontWeight: "bold" },
-        }}
-      />
-      <Text style={{ fontSize: 100, marginVertical: 10, paddingTop: 20, paddingBottom: 20 }}>{currentProblem}</Text>
-      <TextInput
+      <View
         style={{
-          height: 40,
-          borderColor: "gray",
-          borderWidth: 1,
-          width: "60%",
-          paddingHorizontal: 10,
-          marginBottom: 20,
+          flex: 4,
+          marginTop: 50,
+          padding: 20,
+          justifyContent: "top",
+          alignItems: "center",
         }}
-        placeholder="Your answer"
-        keyboardType="numeric"
-        value={userAnswer}
-        onChangeText={setUserAnswer}
-      />
-      <Button
-        title="Check Answer"
-        onPress={() => {
-          if (checkAnswer(currentProblem, userAnswer)) {
-            setIsCorrect(true);
-            ActionSheetIOS.showActionSheetWithOptions(
-              {
-                options: ["OK", "Next Problem"],
-                cancelButtonIndex: 0,
-                title: "Correct!",
-              },
-              (buttonIndex) => {
-                if (buttonIndex === 1) {
-                  setCurrentProblem(generateRandomProblem());
-                  setUserAnswer("");
-                  setIsCorrect(false);
+      >
+        <Stack.Screen
+          options={{
+            title: "Math Problems",
+            headerStyle: { backgroundColor: "#f4511e" },
+            headerTintColor: "#fff",
+            headerTitleStyle: { fontWeight: "bold" },
+          }}
+        />
+        <Text style={{ fontSize: 24, marginBottom: 20 }}>Score: {score}</Text>
+        <Text
+          style={{
+            fontSize: 100,
+            marginVertical: 10,
+            paddingTop: 20,
+            paddingBottom: 20,
+          }}
+        >
+          {currentProblem}
+        </Text>
+        <TextInput
+          style={{
+            height: 40,
+            borderColor: "gray",
+            borderWidth: 1,
+            width: "60%",
+            paddingHorizontal: 10,
+            marginBottom: 20,
+          }}
+          placeholder="Your answer"
+          keyboardType="numeric"
+          value={userAnswer}
+          onChangeText={setUserAnswer}
+        />
+        <Button
+          title="Check Answer"
+          onPress={() => {
+            if (checkAnswer(currentProblem, userAnswer)) {
+              setIsCorrect(true);
+              ActionSheetIOS.showActionSheetWithOptions(
+                {
+                  options: ["OK", "Next Problem"],
+                  cancelButtonIndex: 0,
+                  title: "Correct!",
+                },
+                (buttonIndex) => {
+                  if (buttonIndex === 1) {
+                    setCurrentProblem(generateRandomProblem());
+                    setUserAnswer("");
+                    setIsCorrect(false);
+                  }
                 }
-              }
-            );
-          } else {
-            setIsCorrect(false);
-            ActionSheetIOS.showActionSheetWithOptions(
-              {
-                options: ["Try Again"],
-                cancelButtonIndex: 0,
-                title: "Incorrect, try again.",
-              },
-              () => {}
-            );
-          }
-        }}
-      />
-      {isCorrect && (
-        <View>
-          <Text style={{ color: "green", marginTop: 20 }}>Correct!</Text>
-        </View>
-      )}
-    </View>
+              );
+            } else {
+              setIsCorrect(false);
+              ActionSheetIOS.showActionSheetWithOptions(
+                {
+                  options: ["Try Again"],
+                  cancelButtonIndex: 0,
+                  title: "Incorrect, try again.",
+                },
+                () => {}
+              );
+            }
+          }}
+        />
+        {isCorrect && (
+          <View>
+            <Text style={{ color: "green", marginTop: 20 }}>Correct!</Text>
+          </View>
+        )}
+      </View>
     </SafeAreaProvider>
   );
 }
-
